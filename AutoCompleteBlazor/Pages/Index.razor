@@ -1,0 +1,53 @@
+﻿@page "/"
+@using Blazored.Typeahead
+
+
+<BlazoredTypeahead SearchMethod="SearchArticles"
+                   @bind-Value="SelectedArticle">
+    <SelectedTemplate>
+        @context.Title
+    </SelectedTemplate>
+    <ResultTemplate>
+        @context.Title <strong> by @context.Author </strong>
+    </ResultTemplate>
+</BlazoredTypeahead>
+
+@if (SelectedArticle != null)
+{
+    <p>Selected Film is: @SelectedArticle.Title</p>
+}
+
+@code {
+
+    private List<Article> Articles;
+    private Article SelectedArticle;
+
+    protected override void OnInitialized()
+    {
+        Articles = new List<Article> {
+            new Article("CRUD Using Blazor, Entity Framework Core And Dapper", "Faisal Pathan"),
+            new Article("Sorting Table In Blazor", "Faisal Pathan"),
+            new Article("Refresh Table In Blazor", "Mr. Pathan"),
+            new Article("Create Table In Blazor", "Alex Range"),
+            new Article("Pagination In Blazor", "The Code Hubs") };
+    }
+
+    private async Task<IEnumerable<Article>> SearchArticles(string searchText)
+    {
+        return await Task.FromResult(Articles.Where(x => x.Title.ToLower().Contains(searchText.ToLower()) ||
+        x.Author.ToLower().Contains(searchText.ToLower())).ToList());
+    }
+
+    public class Article
+    {
+        public string Title { get; set; }
+        public string Author { get; set; }
+
+        public Article(string title, string author)
+        {
+            Title = title;
+            Author = author;
+        }
+    }
+
+}
